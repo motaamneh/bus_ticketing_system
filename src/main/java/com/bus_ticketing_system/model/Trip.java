@@ -23,6 +23,10 @@ public class Trip {
         this.availableSeats = availableSeats;
     }
 
+    public Trip() {
+
+    }
+
     public int getTripId() {
         return tripId;
     }
