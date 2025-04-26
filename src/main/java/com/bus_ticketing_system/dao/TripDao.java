@@ -127,6 +127,37 @@ public class TripDao {
 
     }
 
+    public boolean updateTrip(Trip trip)throws SQLException{
+        String sql = "UPDATE trips SET origin_city_id = ?, destination_city_id = ?, " +
+                "departure_time = ?, arrival_time = ?, travel_type = ?, " +
+                "total_seats = ?, available_seats = ? WHERE trip_id = ?";
+
+        try(Connection conn = DBConnection.getConnection();
+        PreparedStatement stmt = conn.prepareStatement(sql)) {
+            stmt.setInt(1, trip.getOriginCityId());
+            stmt.setInt(2, trip.getDestinationCityId());
+            stmt.setTimestamp(3, trip.getDepartureTime());
+            stmt.setTimestamp(4, trip.getArrivalTime());
+            stmt.setString(5, trip.getTravelType());
+            stmt.setInt(6, trip.getTotalSeats());
+            stmt.setInt(7, trip.getAvailableSeats());
+            stmt.setInt(8, trip.getTripId());
+            int affectedRows = stmt.executeUpdate();
+
+            return affectedRows > 0;
+        }
+    }
+
+    public boolean deleteTrip(int tripId)throws SQLException{
+        String sql = "DELETE FROM trips WHERE trip_id = ?";
+
+        try(Connection conn = DBConnection.getConnection();
+        PreparedStatement stmt = conn.prepareStatement(sql)) {
+            stmt.setInt(1, tripId);
+            int affectedRows = stmt.executeUpdate();
+            return affectedRows > 0;
+        }
+    }
 
 
 
@@ -145,6 +176,10 @@ public class TripDao {
         trip.setAvailableSeats(rs.getInt("available_seats"));
         return trip;
     }
+
+
+
+
 
 
 }

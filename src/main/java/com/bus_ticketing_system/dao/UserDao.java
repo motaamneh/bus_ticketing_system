@@ -74,6 +74,10 @@ public class UserDao {
         return user;
     }
 
+
+
+
+
     private void printSQLException(SQLException ex) {
         for (Throwable e : ex) {
             if (e instanceof SQLException) {
