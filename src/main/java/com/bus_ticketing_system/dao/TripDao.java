@@ -106,6 +106,29 @@ public class TripDao {
 
     }
 
+    public List<Trip> getAllTrips() throws SQLException{
+        String sql = "SELECT * FROM trips ORDER BY departure_time";
+        List<Trip> trips = new ArrayList<>();
+        try(Connection conn = DBConnection.getConnection();
+        Statement stmt = conn.createStatement();
+        ResultSet rs = stmt.executeQuery(sql)) {
+            while(rs.next()){
+                Trip trip = mapResultSetToTrip(rs);
+                City originCity = cityDao.getCityById(trip.getOriginCityId());
+                City destinationCity = cityDao.getCityById((trip.getDestinationCityId()));
+                trip.setOriginCity(originCity);
+                trip.setDestinationCity(destinationCity);
+                trips.add(trip);
+
+            }
+        }
+
+        return trips;
+
+    }
+
+
+
 
 
 
