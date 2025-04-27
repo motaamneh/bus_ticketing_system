@@ -7,7 +7,6 @@ import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
-import javax.servlet.*;
 import java.io.IOException;
 
 @WebServlet("/admin/trips")
@@ -18,7 +17,7 @@ public class TripManagementServlet extends HttpServlet {
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         try {
             request.setAttribute("trips", tripDao.getAllTrips());
-            request.getRequestDispatcher("/tripmanagement.jsp").forward(request, response);
+            request.getRequestDispatcher("/tripmanagment.jsp").forward(request, response);
         } catch (Exception e) {
             throw new ServletException(e);
         }

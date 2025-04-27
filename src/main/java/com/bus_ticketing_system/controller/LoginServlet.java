@@ -64,11 +64,11 @@ public class LoginServlet extends HttpServlet {
 
                 System.out.println("Logged in user: " + user.getUsername() + " | Role: [" + role + "]");
 
-                // Role-based redirection
+
                 if ("admin".equals(role)) {
-                    response.sendRedirect(request.getContextPath() + "/admindashboard.jsp");
+                    response.sendRedirect(request.getContextPath() + "/admin/dashboard");
                 } else if ("passenger".equals(role)) {
-                    response.sendRedirect(request.getContextPath() + "/passengerdashboard.jsp");
+                    response.sendRedirect(request.getContextPath() + "/passenger/dashboard");
                 } else {
                     System.out.println("Unknown role: " + role);
                     response.sendRedirect(request.getContextPath() + "/userlogin.jsp?error=UnknownRole");
