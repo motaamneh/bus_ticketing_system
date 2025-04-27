@@ -159,7 +159,70 @@ public class TripDao {
         }
     }
 
+    public synchronized boolean bookSeats(int tripId, int seats)throws SQLException{
+        Connection conn = null;
+        PreparedStatement checkStmt = null;
+        PreparedStatement updateStmt = null;
+        ResultSet rs = null;
 
+        try {
+            conn = DBConnection.getConnection();
+            conn.setAutoCommit(false);
+            String checkSql = "SELECT available_seats FROM trips WHERE trip_id = ? FOR UPDATE";
+            checkStmt = conn.prepareStatement(checkSql);
+            checkStmt.setInt(1, tripId);
+            rs = checkStmt.executeQuery();
+            if(rs.next()){
+                int avilableSeats = rs.getInt("available_seats");
+                if(avilableSeats>= seats){
+                    String updateSql = "UPDATE trips SET available_seats = available_seats - ? WHERE trip_id = ?";
+                    updateStmt.setInt(1, seats);
+                    updateStmt.setInt(2, tripId);
+                    int affectedRows = updateStmt.executeUpdate();
+                    conn.commit();
+                    return affectedRows > 0;
+                }
+            }
+
+            conn.rollback();
+            return false;
+        }catch(SQLException e){
+            if (conn != null) {
+                try {
+                    conn.rollback();
+                } catch (SQLException ex) {
+                    ex.printStackTrace();
+                }
+            }
+            throw e;
+        }finally {
+            if (rs != null) try {
+                rs.close();
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+            if (checkStmt != null) try {
+                checkStmt.close();
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+            if (updateStmt != null) try {
+                updateStmt.close();
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+            if (conn != null) {
+                try {
+                    conn.setAutoCommit(true);
+                    conn.close();
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
+            }
+
+        }
+
+    }
 
 
 
