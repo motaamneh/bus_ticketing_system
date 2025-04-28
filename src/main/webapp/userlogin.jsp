@@ -160,6 +160,7 @@
 </head>
 
 <body>
+
 <!-- Navigation Bar -->
 <nav class="navbar">
   <div class="logo-container">
