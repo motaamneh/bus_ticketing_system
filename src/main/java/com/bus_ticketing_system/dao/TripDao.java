@@ -74,6 +74,45 @@ public class TripDao {
         return null;
     }
 
+    public List<Trip> filterTrips(Integer originCityId, Integer destinationCityId, String travelType) throws SQLException {
+        StringBuilder sql = new StringBuilder("SELECT * FROM trips WHERE 1=1");
+        List<Object> params = new ArrayList<>();
+
+        if (originCityId != null) {
+            sql.append(" AND origin_city_id = ?");
+            params.add(originCityId);
+        }
+        if (destinationCityId != null) {
+            sql.append(" AND destination_city_id = ?");
+            params.add(destinationCityId);
+        }
+        if (travelType != null && !travelType.isEmpty()) {
+            sql.append(" AND travel_type = ?");
+            params.add(travelType);
+        }
+        sql.append(" ORDER BY departure_time");
+
+        List<Trip> trips = new ArrayList<>();
+        try (Connection conn = DBConnection.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql.toString())) {
+
+            for (int i = 0; i < params.size(); i++) {
+                stmt.setObject(i + 1, params.get(i));
+            }
+
+            try (ResultSet rs = stmt.executeQuery()) {
+                while (rs.next()) {
+                    Trip trip = mapResultSetToTrip(rs);
+                    City originCity = cityDao.getCityById(trip.getOriginCityId());
+                    City destinationCity = cityDao.getCityById(trip.getDestinationCityId());
+                    trip.setOriginCity(originCity);
+                    trip.setDestinationCity(destinationCity);
+                    trips.add(trip);
+                }
+            }
+        }
+        return trips;
+    }
 
     public List<Trip> searchTrips(int originCityId, int destinationCityId,
                                   Date travelDate, String travelType)throws SQLException{

@@ -361,8 +361,32 @@
     TripDao tripDAO = new TripDao();
     CityDao cityDAO = new CityDao();
 
-    // Get all trips
-    List<Trip> trips = tripDAO.getAllTrips();
+    // Get filter parameters from request
+    String originParam = request.getParameter("origin");
+    String destParam = request.getParameter("destination");
+    String typeParam = request.getParameter("type");
+
+    Integer originCityId = null;
+    Integer destinationCityId = null;
+    String travelType = null;
+
+    if (originParam != null && !originParam.isEmpty()) {
+        originCityId = Integer.parseInt(originParam);
+    }
+    if (destParam != null && !destParam.isEmpty()) {
+        destinationCityId = Integer.parseInt(destParam);
+    }
+    if (typeParam != null && !typeParam.isEmpty()) {
+        travelType = typeParam;
+    }
+
+    // Get filtered or all trips
+    List<Trip> trips;
+    if (originCityId != null || destinationCityId != null || travelType != null) {
+        trips = tripDAO.filterTrips(originCityId, destinationCityId, travelType);
+    } else {
+        trips = tripDAO.getAllTrips();
+    }
 
     // For formatting dates
     SimpleDateFormat dateFormat = new SimpleDateFormat("MMM dd, yyyy | hh:mm a");
@@ -381,7 +405,7 @@
     </div>
 
     <ul class="sidebar-menu">
-        <li><a href="<%= request.getContextPath() %>/admindashboard.jsp">Dashboard</a></li>
+        <li><a href="<%= request.getContextPath() %>/admin/dashboard">Dashboard</a></li>
         <li><a href="<%= request.getContextPath() %>/admin/trips" class="active">Trip Management</a></li>
         <li><a href="<%= request.getContextPath() %>/admin/fares">Fare Configuration</a></li>
         <li><a href="<%= request.getContextPath() %>/admin/reports">Reports</a></li>
@@ -407,37 +431,45 @@
 
     <!-- Filter Section -->
     <div class="filter-container">
-        <div class="filter-field">
-            <label for="filter-origin">Origin City</label>
-            <select id="filter-origin">
-                <option value="">All Origins</option>
-                <% for (City city : cities) { %>
-                <option value="<%= city.getCityId() %>"><%= city.getCityName() %></option>
-                <% } %>
-            </select>
-        </div>
-        <div class="filter-field">
-            <label for="filter-destination">Destination City</label>
-            <select id="filter-destination">
-                <option value="">All Destinations</option>
-                <% for (City city : cities) { %>
-                <option value="<%= city.getCityId() %>"><%= city.getCityName() %></option>
-                <% } %>
-            </select>
-        </div>
-        <div class="filter-field">
-            <label for="filter-travel-type">Travel Type</label>
-            <select id="filter-travel-type">
-                <option value="">All Types</option>
-                <option value="CITY">City</option>
-                <option value="INTERCITY">Inter-City</option>
-            </select>
-        </div>
-        <div class="filter-actions">
-            <button class="action-btn" onclick="filterTrips()">Filter</button>
-            <button class="action-btn" onclick="resetFilters()">Reset</button>
-            <button class="action-btn" onclick="openAddModal()">Add New Trip</button>
-        </div>
+        <form id="filterForm" method="get" action="<%= request.getContextPath() %>/admin/trips">
+            <div class="filter-field">
+                <label for="filter-origin">Origin City</label>
+                <select id="filter-origin" name="origin">
+                    <option value="">All Origins</option>
+                    <% for (City city : cities) { %>
+                    <option value="<%= city.getCityId() %>"
+                            <%= originCityId != null && originCityId.equals(city.getCityId()) ? "selected" : "" %>>
+                        <%= city.getCityName() %>
+                    </option>
+                    <% } %>
+                </select>
+            </div>
+            <div class="filter-field">
+                <label for="filter-destination">Destination City</label>
+                <select id="filter-destination" name="destination">
+                    <option value="">All Destinations</option>
+                    <% for (City city : cities) { %>
+                    <option value="<%= city.getCityId() %>"
+                            <%= destinationCityId != null && destinationCityId.equals(city.getCityId()) ? "selected" : "" %>>
+                        <%= city.getCityName() %>
+                    </option>
+                    <% } %>
+                </select>
+            </div>
+            <div class="filter-field">
+                <label for="filter-travel-type">Travel Type</label>
+                <select id="filter-travel-type" name="type">
+                    <option value="">All Types</option>
+                    <option value="CITY" <%= "CITY".equals(travelType) ? "selected" : "" %>>City</option>
+                    <option value="INTER_CITY" <%= "INTER_CITY".equals(travelType) ? "selected" : "" %>>Inter-City</option>
+                </select>
+            </div>
+            <div class="filter-actions">
+                <button type="submit" class="action-btn">Filter</button>
+                <button type="button" class="action-btn" onclick="resetFilters()">Reset</button>
+                <button type="button" class="action-btn" onclick="openAddModal()">Add New Trip</button>
+            </div>
+        </form>
     </div>
 
     <!-- Trip Table -->
@@ -537,7 +569,7 @@
                         <select id="travelType" name="travelType" required>
                             <option value="">Select Travel Type</option>
                             <option value="CITY">City</option>
-                            <option value="INTERCITY">Inter-City</option>
+                            <option value="INTER_CITY">Inter-City</option>
                         </select>
                     </div>
                     <div class="form-group">
@@ -595,7 +627,7 @@
                         <label for="editTravelType">Travel Type</label>
                         <select id="editTravelType" name="travelType" required>
                             <option value="CITY">City</option>
-                            <option value="INTERCITY">Inter-City</option>
+                            <option value="INTER_CITY">Inter-City</option>
                         </select>
                     </div>
                     <div class="form-group">
@@ -668,9 +700,18 @@
 
         // Filter functions
         function filterTrips() {
-            // In a real application, this would submit the filter form or use AJAX
-            // For demonstration, we'll just show an alert
-            alert('Filtering functionality would be implemented with backend processing');
+            const origin = document.getElementById('filter-origin').value;
+            const destination = document.getElementById('filter-destination').value;
+            const type = document.getElementById('filter-travel-type').value;
+
+            // Construct URL with query parameters
+            const url = new URL(window.location.href);
+            url.searchParams.set('origin', origin);
+            url.searchParams.set('destination', destination);
+            url.searchParams.set('type', type);
+
+            // Reload page with filters
+            window.location.href = url.toString();
         }
 
         function resetFilters() {
@@ -678,6 +719,10 @@
             document.getElementById('filter-destination').value = '';
             document.getElementById('filter-travel-type').value = '';
         }
+
+
+
+
 
         // Close modals when clicking outside
         window.onclick = function(event) {

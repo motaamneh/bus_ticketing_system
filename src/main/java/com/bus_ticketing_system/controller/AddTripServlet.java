@@ -24,7 +24,7 @@ public class AddTripServlet extends HttpServlet {
             trip.setDestinationCityId(Integer.parseInt(request.getParameter("destinationCityId")));
             trip.setDepartureTime(Timestamp.valueOf(request.getParameter("departureTime").replace("T", " ") + ":00"));
             trip.setArrivalTime(Timestamp.valueOf(request.getParameter("arrivalTime").replace("T", " ") + ":00"));
-            trip.setTravelType(request.getParameter("travelType"));
+            trip.setTravelType(request.getParameter("travelType").toUpperCase().replace("-", "_"));
             trip.setTotalSeats(Integer.parseInt(request.getParameter("totalSeats")));
             trip.setAvailableSeats(Integer.parseInt(request.getParameter("totalSeats"))); // Initially available = total
 
