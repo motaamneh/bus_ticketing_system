@@ -3,4 +3,17 @@
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="https://jakarta.ee/xml/ns/jakartaee https://jakarta.ee/xml/ns/jakartaee/web-app_6_0.xsd"
          version="6.0">
+
+    <context-param>
+        <param-name>student.discount</param-name>
+        <param-value>20.0</param-value> <!-- Example: 20% student discount -->
+    </context-param>
+    <context-param>
+        <param-name>senior.discount</param-name>
+        <param-value>30.0</param-value> <!-- Example: 15% senior discount -->
+    </context-param>
+    <context-param>
+        <param-name>evening.discount</param-name>
+        <param-value>15.0</param-value> <!-- Example: 10% evening discount -->
+    </context-param>
 </web-app>
