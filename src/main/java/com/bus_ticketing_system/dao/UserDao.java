@@ -1,8 +1,11 @@
 package com.bus_ticketing_system.dao;
 
 import com.bus_ticketing_system.model.User;
+import com.bus_ticketing_system.util.DBConnection;
 
 import java.sql.*;
+
+import static java.lang.String.valueOf;
 
 public class UserDao {
     public int registerUser(User user) throws ClassNotFoundException {
@@ -74,7 +77,35 @@ public class UserDao {
         return user;
     }
 
+    public User getUserById(int userId) {
+        String sql = "SELECT * FROM users WHERE user_id = ?";
 
+        try (Connection conn = DBConnection.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+
+            stmt.setInt(1, userId);
+            ResultSet rs = stmt.executeQuery();
+
+            if (rs.next()) {
+                return extractUserFromResultSet(rs);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return null;
+    }
+    private User extractUserFromResultSet(ResultSet rs) throws SQLException {
+        User user = new User();
+        user.setId(rs.getInt("id"));
+        user.setFirst_name(rs.getString("first_name"));
+        user.setLast_name(rs.getString("last_name"));
+        user.setUsername(rs.getString("username"));
+        user.setPassword(rs.getString("password"));
+        user.setRole(rs.getString("role"));
+        user.setCategory(rs.getString("category"));
+        return user;
+    }
 
 
 
