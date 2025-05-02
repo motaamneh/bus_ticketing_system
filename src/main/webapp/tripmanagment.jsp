@@ -501,6 +501,7 @@
             <th>Departure</th>
             <th>Arrival</th>
             <th>Seats</th>
+            <th>Base Fare</th>
             <th>Status</th>
             <th>Actions</th>
         </tr>
@@ -514,6 +515,7 @@
             <td><%= dateFormat.format(trip.getDepartureTime()) %></td>
             <td><%= dateFormat.format(trip.getArrivalTime()) %></td>
             <td><%= trip.getAvailableSeats() %>/<%= trip.getTotalSeats() %></td>
+            <td>$<%= String.format("%.2f", trip.getBaseFare()) %></td>
             <td>
                 <%
                     double seatRatio = (double) trip.getAvailableSeats() / trip.getTotalSeats();
@@ -592,6 +594,10 @@
                         </select>
                     </div>
                     <div class="form-group">
+                        <label for="baseFare">Base Fare ($)</label>
+                        <input type="number" id="baseFare" name="baseFare" step="0.01" min="0" required>
+                    </div>
+                    <div class="form-group">
                         <label for="totalSeats">Total Seats</label>
                         <input type="number" id="totalSeats" name="totalSeats" min="1" value="40" required>
                     </div>
@@ -648,6 +654,10 @@
                             <option value="CITY">City</option>
                             <option value="INTER_CITY">Inter-City</option>
                         </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="editBaseFare">Base Fare ($)</label>
+                        <input type="number" id="editBaseFare" name="baseFare" step="0.01" min="0" required>
                     </div>
                     <div class="form-group">
                         <label for="editTotalSeats">Total Seats</label>

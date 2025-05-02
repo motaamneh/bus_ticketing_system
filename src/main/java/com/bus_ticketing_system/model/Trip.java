@@ -9,11 +9,14 @@ public class Trip {
     private String travelType;
     private int totalSeats;
     private int availableSeats;
+    private double baseFare;
+    private boolean active;
 
     private City originCity;
     private City destinationCity;
 
-    public Trip(int originCityId, int destinationCityId, Timestamp departureTime, Timestamp arrivalTime, String travelType, int totalSeats, int availableSeats) {
+    public Trip(int tripId, int originCityId, int destinationCityId, Timestamp departureTime, Timestamp arrivalTime, String travelType, int totalSeats, int availableSeats, double baseFare, boolean active, City originCity, City destinationCity) {
+        this.tripId = tripId;
         this.originCityId = originCityId;
         this.destinationCityId = destinationCityId;
         this.departureTime = departureTime;
@@ -21,10 +24,30 @@ public class Trip {
         this.travelType = travelType;
         this.totalSeats = totalSeats;
         this.availableSeats = availableSeats;
+        this.baseFare = baseFare;
+        this.active = active;
+        this.originCity = originCity;
+        this.destinationCity = destinationCity;
     }
 
     public Trip() {
 
+    }
+
+    public double getBaseFare() {
+        return baseFare;
+    }
+
+    public void setBaseFare(double baseFare) {
+        this.baseFare = baseFare;
+    }
+
+    public boolean isActive() {
+        return active;
+    }
+
+    public void setActive(boolean active) {
+        this.active = active;
     }
 
     public int getTripId() {
@@ -118,6 +141,8 @@ public class Trip {
                 ", travelType='" + travelType + '\'' +
                 ", totalSeats=" + totalSeats +
                 ", availableSeats=" + availableSeats +
+                ", baseFare=" + baseFare +
+                ", active=" + active +
                 ", originCity=" + originCity +
                 ", destinationCity=" + destinationCity +
                 '}';

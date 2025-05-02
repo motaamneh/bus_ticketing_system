@@ -22,13 +22,17 @@ public class AddTripServlet extends HttpServlet {
             Trip trip = new Trip();
             trip.setOriginCityId(Integer.parseInt(request.getParameter("originCityId")));
             trip.setDestinationCityId(Integer.parseInt(request.getParameter("destinationCityId")));
+
+            // Set other fields
             trip.setDepartureTime(Timestamp.valueOf(request.getParameter("departureTime").replace("T", " ") + ":00"));
             trip.setArrivalTime(Timestamp.valueOf(request.getParameter("arrivalTime").replace("T", " ") + ":00"));
             trip.setTravelType(request.getParameter("travelType").toUpperCase().replace("-", "_"));
             trip.setTotalSeats(Integer.parseInt(request.getParameter("totalSeats")));
-            trip.setAvailableSeats(Integer.parseInt(request.getParameter("totalSeats"))); // Initially available = total
+            trip.setAvailableSeats(Integer.parseInt(request.getParameter("totalSeats")));
+            trip.setBaseFare(Double.parseDouble(request.getParameter("baseFare")));
+            trip.setActive(true); // New trips should be active by default
 
-            tripDao.createTrip(trip);
+            tripDao.insertTrip(trip);
             response.sendRedirect(request.getContextPath() + "/admin/trips");
         } catch (Exception e) {
             throw new ServletException(e);

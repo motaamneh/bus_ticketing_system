@@ -28,6 +28,8 @@ public class UpdateTripServlet extends HttpServlet {
             trip.setTravelType(request.getParameter("travelType"));
             trip.setTotalSeats(Integer.parseInt(request.getParameter("totalSeats")));
             trip.setAvailableSeats(Integer.parseInt(request.getParameter("availableSeats")));
+            trip.setBaseFare(Double.parseDouble(request.getParameter("baseFare")));
+
 
             tripDao.updateTrip(trip);
             response.sendRedirect(request.getContextPath() + "/admin/trips");
