@@ -78,7 +78,7 @@ public class FareConfig {
 
     public double getDiscountPercentage(String category) {
         checkRefresh();
-        Double percentage = discountPercentages.get(category);
+        Double percentage = discountPercentages.get(category.toUpperCase());
         return percentage != null ? percentage : 0.0; // Default to 0.0 if not found
     }
 
