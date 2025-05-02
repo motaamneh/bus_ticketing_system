@@ -1,6 +1,6 @@
 package com.bus_ticketing_system.model;
 
-import java.security.Timestamp;
+import java.sql.Timestamp;
 
 public class FareRule {
     private int ruleId;

@@ -55,16 +55,16 @@ public class FareConfig {
         DiscountRuleDao discountRuleDao = new DiscountRuleDao();
 
 
-        // Refresh fare multipliers
-//        for (FareRule rule : fareRuleDAO.getAllFareRules()) {
-//            String key = rule.getTicketType() + "_" + rule.getTravelType();
-//            fareMultipliers.put(key, rule.getBaseMultiplier());
-//        }
+         //Refresh fare multipliers
+        for (FareRule rule : fareRuleDao.getAllFareRules()) {
+            String key = rule.getTicketType() + "_" + rule.getTravelType();
+            fareMultipliers.put(key, rule.getBaseMultiplier());
+        }
 
-        // Refresh discount percentages
-//        for (DiscountRule rule : discountRuleDAO.getAllDiscountRules()) {
-//            discountPercentages.put(rule.getCategory().toString(), rule.getDiscountPercentage());
-//        }
+         //Refresh discount percentages
+        for (DiscountRule rule : discountRuleDao.getAllDiscountRules()) {
+            discountPercentages.put(rule.getCategory().toString(), rule.getDiscountPercentage());
+        }
 
         lastUpdated = System.currentTimeMillis();
     }
