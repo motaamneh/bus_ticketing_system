@@ -4,7 +4,8 @@
          pageEncoding="UTF-8"%>
 <%@ page import="java.util.List" %>
 <%@ page import="java.util.Map" %>
-<%@ page import="com.bus_ticketing_system.config.FareConfig" %>
+<%@ page import="java.util.HashMap" %>
+<%@ page import="com.bus_ticketing_system.model.FareRule" %>
 <!DOCTYPE html>
 <html>
 <head>
@@ -349,21 +350,19 @@
   }
 
   // Get fare configurations from request
-  List<FareConfig> cityFares = (List<FareConfig>) request.getAttribute("cityFares");
-  List<FareConfig> intercityFares = (List<FareConfig>) request.getAttribute("intercityFares");
+// Get fare configurations and discounts from request
+    List<FareRule> cityFares = (List<FareRule>) request.getAttribute("cityFares");
+    List<FareRule> intercityFares = (List<FareRule>) request.getAttribute("intercityFares");
+    Map<String, Double> discounts = (Map<String, Double>) request.getAttribute("discounts");
 
-  // Get discount configurations
-  Map<String, Integer> discounts = (Map<String, Integer>) request.getAttribute("discounts");
-
-  // Default values if null
-  if (discounts == null) {
-    discounts = Map.of(
-            "regular", 0,
-            "student", 20,
-            "senior", 30,
-            "evening", 15
-    );
-  }
+    // Provide default discounts if null
+    if (discounts == null) {
+        discounts = new HashMap<>();
+        discounts.put("regular", 0.0);
+        discounts.put("student", 20.0);
+        discounts.put("senior", 30.0);
+        discounts.put("evening", 15.0);
+    }
 %>
 
 <!-- Sidebar -->
@@ -378,7 +377,7 @@
   <ul class="sidebar-menu">
     <li><a href="<%= request.getContextPath() %>/admin/dashboard">Dashboard</a></li>
     <li><a href="<%= request.getContextPath() %>/admin/trips">Trip Management</a></li>
-    <li><a href="<%= request.getContextPath() %>/admin/fares" class="active">Fare Configuration</a></li>
+      <li><a href="<%= request.getContextPath() %>/admin/fares">Fare Configuration</a></li>
     <li><a href="<%= request.getContextPath() %>/admin/reports">Reports</a></li>
     <li><a href="<%= request.getContextPath() %>/admin/users">User Management</a></li>
     <li><a href="<%= request.getContextPath() %>/admin/settings">Settings</a></li>
@@ -429,114 +428,111 @@
         <button class="tab-btn" onclick="openSubTab(event, 'intercityFares')">Inter-City Travel</button>
       </div>
 
-<%--      <!-- City Fares -->--%>
-<%--      <div id="cityFares" class="tab-content active">--%>
-<%--        <div class="fare-config-container">--%>
-<%--          <% if (cityFares != null && !cityFares.isEmpty()) { %>--%>
-<%--          <% for (FareConfig fare : cityFares) { %>--%>
-<%--          <div class="fare-card">--%>
-<%--            <div class="fare-card-header">--%>
-<%--              <%= fare.getTicketType() %> <span class="fare-card-badge">City</span>--%>
-<%--            </div>--%>
-<%--            <form action="<%= request.getContextPath() %>/admin/fares/update" method="post">--%>
-<%--              <input type="hidden" name="fareId" value="<%= fare.getId() %>">--%>
-<%--              <input type="hidden" name="travelType" value="city">--%>
+      <!-- City Fares -->
+      <div id="cityFares" class="tab-content active">
+        <div class="fare-config-container">
+          <% if (cityFares != null && !cityFares.isEmpty()) { %>
+          <% for (FareRule fare : cityFares) { %>
+          <div class="fare-card">
+            <div class="fare-card-header">
+              <%= fare.getTicketType() %> <span class="fare-card-badge">City</span>
+            </div>
+            <form action="<%= request.getContextPath() %>/admin/fares/update" method="post">
+              <input type="hidden" name="fareId" value="<%= fare.getRuleId() %>">
+              <input type="hidden" name="travelType" value="city">
 
-<%--              <div class="form-group">--%>
-<%--                <label for="ticketType<%= fare.getId() %>">Ticket Type</label>--%>
-<%--                <select id="ticketType<%= fare.getId() %>" name="ticketType">--%>
-<%--                  <option value="One-Trip" <%= "One-Trip".equals(fare.getTicketType()) ? "selected" : "" %>>One-Trip</option>--%>
-<%--                  <option value="Daily Pass" <%= "Daily Pass".equals(fare.getTicketType()) ? "selected" : "" %>>Daily Pass</option>--%>
-<%--                  <option value="Weekly Pass" <%= "Weekly Pass".equals(fare.getTicketType()) ? "selected" : "" %>>Weekly Pass</option>--%>
-<%--                  <option value="Monthly Pass" <%= "Monthly Pass".equals(fare.getTicketType()) ? "selected" : "" %>>Monthly Pass</option>--%>
-<%--                </select>--%>
-<%--              </div>--%>
+              <div class="form-group">
+                <label for="ticketType<%= fare.getRuleId() %>">Ticket Type</label>
+                <select id="ticketType<%= fare.getTicketType() %>" name="ticketType">
+                  <option value="One-Trip" <%= "One-Trip".equals(fare.getTicketType()) ? "selected" : "" %>>One-Trip</option>
+                  <option value="Daily Pass" <%= "Daily Pass".equals(fare.getTicketType()) ? "selected" : "" %>>Daily Pass</option>
+                  <option value="Weekly Pass" <%= "Weekly Pass".equals(fare.getTicketType()) ? "selected" : "" %>>Weekly Pass</option>
+                  <option value="Monthly Pass" <%= "Monthly Pass".equals(fare.getTicketType()) ? "selected" : "" %>>Monthly Pass</option>
+                </select>
+              </div>
 
-<%--              <div class="form-group">--%>
-<%--                <label for="baseFare<%= fare.getId() %>">Base Fare ($)</label>--%>
-<%--                <input type="number" id="baseFare<%= fare.getId() %>" name="baseFare" value="<%= fare.getBaseFare() %>" min="0" step="0.01">--%>
-<%--              </div>--%>
+              <div class="form-group">
+                <label for="baseFare<%= fare.getRuleId() %>">Base Fare ($)</label>
+                <input type="number" id="baseFare<%= fare.getRuleId() %>" name="baseMultiplier"
+                       value="<%= fare.getBaseMultiplier() %>" min="0" step="0.01">
 
-<%--              <div class="form-group">--%>
-<%--                <label for="description<%= fare.getId() %>">Description</label>--%>
-<%--                <input type="text" id="description<%= fare.getId() %>" name="description" value="<%= fare.getDescription() != null ? fare.getDescription() : "" %>">--%>
-<%--              </div>--%>
+              </div>
 
-<%--              <button type="submit" class="action-btn">Update Fare</button>--%>
-<%--            </form>--%>
-<%--            <form action="<%= request.getContextPath() %>/admin/fares/delete" method="post" onsubmit="return confirm('Are you sure you want to delete this fare configuration?');">--%>
-<%--              <input type="hidden" name="fareId" value="<%= fare.getId() %>">--%>
-<%--              <button type="submit" class="delete-btn">Delete</button>--%>
-<%--            </form>--%>
-<%--          </div>--%>
-<%--          <% } %>--%>
-<%--          <% } else { %>--%>
-<%--          <div class="fare-card">--%>
-<%--            <div class="fare-card-header">--%>
-<%--              No City Fares Configured--%>
-<%--            </div>--%>
-<%--            <p style="text-align: center; margin: 20px 0;">--%>
-<%--              No fare configurations found for city travel. Please add new configurations.--%>
-<%--            </p>--%>
-<%--          </div>--%>
-<%--          <% } %>--%>
-<%--        </div>--%>
-<%--      </div>--%>
 
-<%--      <!-- Inter-City Fares -->--%>
-<%--      <div id="intercityFares" class="tab-content">--%>
-<%--        <div class="fare-config-container">--%>
-<%--          <% if (intercityFares != null && !intercityFares.isEmpty()) { %>--%>
-<%--          <% for (FareConfig fare : intercityFares) { %>--%>
-<%--          <div class="fare-card">--%>
-<%--            <div class="fare-card-header">--%>
-<%--              <%= fare.getTicketType() %> <span class="fare-card-badge">Inter-City</span>--%>
-<%--            </div>--%>
-<%--            <form action="<%= request.getContextPath() %>/admin/fares/update" method="post">--%>
-<%--              <input type="hidden" name="fareId" value="<%= fare.getId() %>">--%>
-<%--              <input type="hidden" name="travelType" value="intercity">--%>
 
-<%--              <div class="form-group">--%>
-<%--                <label for="ticketType<%= fare.getId() %>">Ticket Type</label>--%>
-<%--                <select id="ticketType<%= fare.getId() %>" name="ticketType">--%>
-<%--                  <option value="One-Trip" <%= "One-Trip".equals(fare.getTicketType()) ? "selected" : "" %>>One-Trip</option>--%>
-<%--                  <option value="Daily Pass" <%= "Daily Pass".equals(fare.getTicketType()) ? "selected" : "" %>>Daily Pass</option>--%>
-<%--                  <option value="Weekly Pass" <%= "Weekly Pass".equals(fare.getTicketType()) ? "selected" : "" %>>Weekly Pass</option>--%>
-<%--                  <option value="Monthly Pass" <%= "Monthly Pass".equals(fare.getTicketType()) ? "selected" : "" %>>Monthly Pass</option>--%>
-<%--                </select>--%>
-<%--              </div>--%>
+              <button type="submit" class="action-btn">Update Fare</button>
+            </form>
+            <form action="<%= request.getContextPath() %>/admin/fares/delete" method="post" onsubmit="return confirm('Are you sure you want to delete this fare configuration?');">
+              <input type="hidden" name="fareId" value="<%= fare.getRuleId() %>">
+              <button type="submit" class="delete-btn">Delete</button>
+            </form>
+          </div>
+          <% } %>
+          <% } else { %>
+          <div class="fare-card">
+            <div class="fare-card-header">
+              No City Fares Configured
+            </div>
+            <p style="text-align: center; margin: 20px 0;">
+              No fare configurations found for city travel. Please add new configurations.
+            </p>
+          </div>
+          <% } %>
+        </div>
+      </div>
 
-<%--              <div class="form-group">--%>
-<%--                <label for="baseFare<%= fare.getId() %>">Base Fare ($)</label>--%>
-<%--                <input type="number" id="baseFare<%= fare.getId() %>" name="baseFare" value="<%= fare.getBaseFare() %>" min="0" step="0.01">--%>
-<%--              </div>--%>
+      <!-- Inter-City Fares -->
+      <div id="intercityFares" class="tab-content">
+        <div class="fare-config-container">
+          <% if (intercityFares != null && !intercityFares.isEmpty()) { %>
+          <% for (FareRule fare : intercityFares) { %>
+          <div class="fare-card">
+            <div class="fare-card-header">
+              <%= fare.getTicketType() %> <span class="fare-card-badge">Inter-City</span>
+            </div>
+            <form action="<%= request.getContextPath() %>/admin/fares/update" method="post">
+              <input type="hidden" name="fareId" value="<%= fare.getRuleId() %>">
+              <input type="hidden" name="travelType" value="intercity">
 
-<%--              <div class="form-group">--%>
-<%--                <label for="description<%= fare.getId() %>">Description</label>--%>
-<%--                <input type="text" id="description<%= fare.getId() %>" name="description" value="<%= fare.getDescription() != null ? fare.getDescription() : "" %>">--%>
-<%--              </div>--%>
+              <div class="form-group">
+                <label for="ticketType<%= fare.getRuleId() %>">Ticket Type</label>
+                <select id="ticketType<%= fare.getTicketType() %>" name="ticketType">
+                  <option value="One-Trip" <%= "One-Trip".equals(fare.getTicketType()) ? "selected" : "" %>>One-Trip</option>
+                  <option value="Daily Pass" <%= "Daily Pass".equals(fare.getTicketType()) ? "selected" : "" %>>Daily Pass</option>
+                  <option value="Weekly Pass" <%= "Weekly Pass".equals(fare.getTicketType()) ? "selected" : "" %>>Weekly Pass</option>
+                  <option value="Monthly Pass" <%= "Monthly Pass".equals(fare.getTicketType()) ? "selected" : "" %>>Monthly Pass</option>
+                </select>
+              </div>
 
-<%--              <button type="submit" class="action-btn">Update Fare</button>--%>
-<%--            </form>--%>
-<%--            <form action="<%= request.getContextPath() %>/admin/fares/delete" method="post" onsubmit="return confirm('Are you sure you want to delete this fare configuration?');">--%>
-<%--              <input type="hidden" name="fareId" value="<%= fare.getId() %>">--%>
-<%--              <button type="submit" class="delete-btn">Delete</button>--%>
-<%--            </form>--%>
-<%--          </div>--%>
-<%--          <% } %>--%>
-<%--          <% } else { %>--%>
-<%--          <div class="fare-card">--%>
-<%--            <div class="fare-card-header">--%>
-<%--              No Inter-City Fares Configured--%>
-<%--            </div>--%>
-<%--            <p style="text-align: center; margin: 20px 0;">--%>
-<%--              No fare configurations found for inter-city travel. Please add new configurations.--%>
-<%--            </p>--%>
-<%--          </div>--%>
-<%--          <% } %>--%>
-<%--        </div>--%>
-<%--      </div>--%>
-<%--    </div>--%>
+              <div class="form-group">
+                <label for="baseFare<%= fare.getRuleId() %>">Base Fare ($)</label>
+                <input type="number" id="baseFare<%= fare.getRuleId() %>" name="baseMultiplier"
+                       value="<%= fare.getBaseMultiplier() %>" min="0" step="0.01">
+              </div>
+
+
+
+              <button type="submit" class="action-btn">Update Fare</button>
+            </form>
+            <form action="<%= request.getContextPath() %>/admin/fares/delete" method="post" onsubmit="return confirm('Are you sure you want to delete this fare configuration?');">
+              <input type="hidden" name="fareId" value="<%= fare.getRuleId() %>">
+              <button type="submit" class="delete-btn">Delete</button>
+            </form>
+          </div>
+          <% } %>
+          <% } else { %>
+          <div class="fare-card">
+            <div class="fare-card-header">
+              No Inter-City Fares Configured
+            </div>
+            <p style="text-align: center; margin: 20px 0;">
+              No fare configurations found for inter-city travel. Please add new configurations.
+            </p>
+          </div>
+          <% } %>
+        </div>
+      </div>
+    </div>
 
     <!-- Discount Configuration Tab -->
     <div id="discountConfig" class="tab-content">

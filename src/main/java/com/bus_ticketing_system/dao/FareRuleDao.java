@@ -28,6 +28,25 @@ public class FareRuleDao {
 
         return null;
     }
+    public List<FareRule> getFaresByTravelType(String travelType){
+        List<FareRule> fareRules = new ArrayList<>();
+        String sql = "SELECT * FROM fare_rules WHERE travel_type = ?";
+
+        try (Connection conn = DBConnection.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+
+            stmt.setString(1, travelType);
+            ResultSet rs = stmt.executeQuery();
+
+            while (rs.next()) {
+                fareRules.add(extractFareRuleFromResultSet(rs));
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return fareRules;
+    }
 
     public FareRule getFareRule(String ticketType,String travelType) {
         String sql = "SELECT * FROM fare_rules WHERE ticket_type = ? AND travel_type = ?";
