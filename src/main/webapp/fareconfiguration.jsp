@@ -325,6 +325,39 @@
       color: #721c24;
       border: 1px solid #f5c6cb;
     }
+    /* Modal Styles */
+    .modal {
+      display: none;
+      position: fixed;
+      z-index: 1000;
+      left: 0;
+      top: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(0,0,0,0.4);
+    }
+
+    .modal-content {
+      background-color: #fefefe;
+      margin: 10% auto;
+      padding: 20px;
+      border: 1px solid #888;
+      width: 40%;
+      border-radius: 8px;
+      box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+    }
+
+    .close-modal {
+      color: #aaa;
+      float: right;
+      font-size: 28px;
+      font-weight: bold;
+      cursor: pointer;
+    }
+
+    .close-modal:hover {
+      color: black;
+    }
   </style>
 </head>
 
@@ -421,11 +454,44 @@
 
     <!-- Fare Configuration Tab -->
     <div id="fareConfig" class="tab-content active">
-      <button onclick="location.href='<%= request.getContextPath() %>/admin/fares/add'" class="add-new-btn">Add New Fare Configuration</button>
+      <button onclick="openAddFareModal()" class="add-new-btn">Add New Fare Configuration</button>
 
       <div class="tab-buttons">
         <button class="tab-btn active" onclick="openSubTab(event, 'cityFares')">City Travel</button>
         <button class="tab-btn" onclick="openSubTab(event, 'intercityFares')">Inter-City Travel</button>
+      </div>
+      <!-- Add Fare Modal Dialog -->
+      <div id="addFareModal" class="modal" style="display:none;">
+        <div class="modal-content">
+          <span class="close-modal" onclick="closeAddFareModal()">&times;</span>
+          <h2>Add New Fare Configuration</h2>
+          <form id="addFareForm" action="<%= request.getContextPath() %>/admin/fares/add" method="post">
+            <div class="form-group">
+              <label for="modalTravelType">Travel Type:</label>
+              <select id="modalTravelType" name="travelType" required>
+                <option value="CITY">City</option>
+                <option value="INTER_CITY">Inter-City</option>
+              </select>
+            </div>
+
+            <div class="form-group">
+              <label for="modalTicketType">Ticket Type:</label>
+              <select id="modalTicketType" name="ticketType" required>
+                <option value="One-Trip">One-Trip</option>
+                <option value="Daily Pass">Daily Pass</option>
+                <option value="Weekly Pass">Weekly Pass</option>
+                <option value="Monthly Pass">Monthly Pass</option>
+              </select>
+            </div>
+
+            <div class="form-group">
+              <label for="modalBaseMultiplier">Base Multiplier:</label>
+              <input type="number" id="modalBaseMultiplier" name="baseMultiplier" step="0.01" min="0" required>
+            </div>
+
+            <button type="submit" class="action-btn">Add Configuration</button>
+          </form>
+        </div>
       </div>
 
       <!-- City Fares -->
@@ -640,6 +706,21 @@
       }
     }, 5000);
   };
+  function openAddFareModal() {
+    document.getElementById('addFareModal').style.display = 'block';
+  }
+
+  function closeAddFareModal() {
+    document.getElementById('addFareModal').style.display = 'none';
+  }
+
+  // Close modal when clicking outside of it
+  window.onclick = function(event) {
+    var modal = document.getElementById('addFareModal');
+    if (event.target == modal) {
+      closeAddFareModal();
+    }
+  }
 </script>
 </body>
 </html>
