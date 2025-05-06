@@ -31,6 +31,39 @@ public class FareRuleDao {
         }
         return false;
     }
+    public boolean updateFareRule(FareRule fareRule) {
+        String sql = "UPDATE fare_rules SET ticket_type = ?, travel_type = ?, base_multiplier = ? WHERE rule_id = ?";
+
+        try (Connection conn = DBConnection.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+
+            stmt.setString(1, fareRule.getTicketType());
+            stmt.setString(2, fareRule.getTravelType());
+            stmt.setBigDecimal(3, BigDecimal.valueOf(fareRule.getBaseMultiplier()));
+            stmt.setInt(4, fareRule.getRuleId());
+
+            return stmt.executeUpdate() == 1;
+        } catch (SQLException e) {
+            e.printStackTrace();
+            System.err.println("SQL Error: " + e.getMessage());
+            return false;
+        }
+    }
+
+    public boolean deleteFareRule(int ruleId) {
+        String sql = "DELETE FROM fare_rules WHERE rule_id = ?";
+
+        try (Connection conn = DBConnection.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+
+            stmt.setInt(1, ruleId);
+            return stmt.executeUpdate() == 1;
+        } catch (SQLException e) {
+            e.printStackTrace();
+            System.err.println("SQL Error: " + e.getMessage());
+            return false;
+        }
+    }
     public FareRule getFareRuleById(int ruleId) {
         String sql = "SELECT * FROM fare_rules WHERE rule_id = ?";
 

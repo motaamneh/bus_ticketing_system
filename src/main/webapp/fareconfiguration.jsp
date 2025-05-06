@@ -398,6 +398,7 @@
     }
 %>
 
+
 <!-- Sidebar -->
 <div class="sidebar">
   <div class="sidebar-header">
@@ -504,32 +505,31 @@
               <%= fare.getTicketType() %> <span class="fare-card-badge">City</span>
             </div>
             <form action="<%= request.getContextPath() %>/admin/fares/update" method="post">
-              <input type="hidden" name="fareId" value="<%= fare.getRuleId() %>">
-              <input type="hidden" name="travelType" value="city">
+              <input type="hidden" name="ruleId" value="<%= fare.getRuleId() %>">
 
               <div class="form-group">
-                <label for="ticketType<%= fare.getRuleId() %>">Ticket Type</label>
-                <select id="ticketType<%= fare.getTicketType() %>" name="ticketType">
-                  <option value="One-Trip" <%= "One-Trip".equals(fare.getTicketType()) ? "selected" : "" %>>One-Trip</option>
-                  <option value="Daily Pass" <%= "Daily Pass".equals(fare.getTicketType()) ? "selected" : "" %>>Daily Pass</option>
-                  <option value="Weekly Pass" <%= "Weekly Pass".equals(fare.getTicketType()) ? "selected" : "" %>>Weekly Pass</option>
-                  <option value="Monthly Pass" <%= "Monthly Pass".equals(fare.getTicketType()) ? "selected" : "" %>>Monthly Pass</option>
+                <label>Ticket Type:</label>
+                <select name="ticketType" required>
+                  <option value="ONE_TRIP" <%= "ONE_TRIP".equals(fare.getTicketType()) ? "selected" : "" %>>One-Trip</option>
+                  <option value="DAILY_PASS" <%= "DAILY_PASS".equals(fare.getTicketType()) ? "selected" : "" %>>Daily Pass</option>
+                  <option value="WEEKLY_PASS" <%= "WEEKLY_PASS".equals(fare.getTicketType()) ? "selected" : "" %>>Weekly Pass</option>
+                  <option value="MONTHLY_PASS" <%= "MONTHLY_PASS".equals(fare.getTicketType()) ? "selected" : "" %>>Monthly Pass</option>
                 </select>
               </div>
 
               <div class="form-group">
-                <label for="baseFare<%= fare.getRuleId() %>">Base Fare ($)</label>
-                <input type="number" id="baseFare<%= fare.getRuleId() %>" name="baseMultiplier"
-                       value="<%= fare.getBaseMultiplier() %>" min="0" step="0.01">
-
+                <label>Base Multiplier:</label>
+                <input type="number" name="baseMultiplier" value="<%= fare.getBaseMultiplier() %>" step="0.01" min="0" required>
               </div>
 
-
+              <input type="hidden" name="travelType" value="<%= fare.getTravelType() %>">
 
               <button type="submit" class="action-btn">Update Fare</button>
             </form>
-            <form action="<%= request.getContextPath() %>/admin/fares/delete" method="post" onsubmit="return confirm('Are you sure you want to delete this fare configuration?');">
-              <input type="hidden" name="fareId" value="<%= fare.getRuleId() %>">
+            <!-- ADD DELETE FORM HERE -->
+            <form action="<%= request.getContextPath() %>/admin/fares/delete" method="post"
+                  onsubmit="return confirm('Are you sure you want to delete this fare rule?');">
+              <input type="hidden" name="ruleId" value="<%= fare.getRuleId() %>">
               <button type="submit" class="delete-btn">Delete</button>
             </form>
           </div>
@@ -557,31 +557,31 @@
               <%= fare.getTicketType() %> <span class="fare-card-badge">Inter-City</span>
             </div>
             <form action="<%= request.getContextPath() %>/admin/fares/update" method="post">
-              <input type="hidden" name="fareId" value="<%= fare.getRuleId() %>">
-              <input type="hidden" name="travelType" value="intercity">
+              <input type="hidden" name="ruleId" value="<%= fare.getRuleId() %>">
 
               <div class="form-group">
-                <label for="ticketType<%= fare.getRuleId() %>">Ticket Type</label>
-                <select id="ticketType<%= fare.getTicketType() %>" name="ticketType">
-                  <option value="One-Trip" <%= "One-Trip".equals(fare.getTicketType()) ? "selected" : "" %>>One-Trip</option>
-                  <option value="Daily Pass" <%= "Daily Pass".equals(fare.getTicketType()) ? "selected" : "" %>>Daily Pass</option>
-                  <option value="Weekly Pass" <%= "Weekly Pass".equals(fare.getTicketType()) ? "selected" : "" %>>Weekly Pass</option>
-                  <option value="Monthly Pass" <%= "Monthly Pass".equals(fare.getTicketType()) ? "selected" : "" %>>Monthly Pass</option>
+                <label>Ticket Type:</label>
+                <select name="ticketType" required>
+                  <option value="ONE_TRIP" <%= "ONE_TRIP".equals(fare.getTicketType()) ? "selected" : "" %>>One-Trip</option>
+                  <option value="DAILY_PASS" <%= "DAILY_PASS".equals(fare.getTicketType()) ? "selected" : "" %>>Daily Pass</option>
+                  <option value="WEEKLY_PASS" <%= "WEEKLY_PASS".equals(fare.getTicketType()) ? "selected" : "" %>>Weekly Pass</option>
+                  <option value="MONTHLY_PASS" <%= "MONTHLY_PASS".equals(fare.getTicketType()) ? "selected" : "" %>>Monthly Pass</option>
                 </select>
               </div>
 
               <div class="form-group">
-                <label for="baseFare<%= fare.getRuleId() %>">Base Fare ($)</label>
-                <input type="number" id="baseFare<%= fare.getRuleId() %>" name="baseMultiplier"
-                       value="<%= fare.getBaseMultiplier() %>" min="0" step="0.01">
+                <label>Base Multiplier:</label>
+                <input type="number" name="baseMultiplier" value="<%= fare.getBaseMultiplier() %>" step="0.01" min="0" required>
               </div>
 
-
+              <input type="hidden" name="travelType" value="<%= fare.getTravelType() %>">
 
               <button type="submit" class="action-btn">Update Fare</button>
             </form>
-            <form action="<%= request.getContextPath() %>/admin/fares/delete" method="post" onsubmit="return confirm('Are you sure you want to delete this fare configuration?');">
-              <input type="hidden" name="fareId" value="<%= fare.getRuleId() %>">
+            <!-- ADD DELETE FORM HERE -->
+            <form action="<%= request.getContextPath() %>/admin/fares/delete" method="post"
+                  onsubmit="return confirm('Are you sure you want to delete this fare rule?');">
+              <input type="hidden" name="ruleId" value="<%= fare.getRuleId() %>">
               <button type="submit" class="delete-btn">Delete</button>
             </form>
           </div>
