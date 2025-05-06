@@ -3,6 +3,7 @@ package com.bus_ticketing_system.dao;
 import com.bus_ticketing_system.model.FareRule;
 import com.bus_ticketing_system.util.DBConnection;
 
+import java.math.BigDecimal;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
@@ -10,6 +11,26 @@ import java.util.List;
 import static java.lang.String.valueOf;
 
 public class FareRuleDao {
+    public boolean insertFareRule(FareRule fareRule) {
+        String sql = "INSERT INTO fare_rules (ticket_type, travel_type, base_multiplier) VALUES (?, ?, ?)";
+
+        try (Connection conn = DBConnection.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+
+            stmt.setString(1, fareRule.getTicketType());
+            stmt.setString(2, fareRule.getTravelType());
+            stmt.setBigDecimal(3, BigDecimal.valueOf(fareRule.getBaseMultiplier()));
+
+            return stmt.executeUpdate() == 1;
+        } catch (SQLException e) {
+            e.printStackTrace();
+            // Log the specific error
+            System.err.println("SQL Error: " + e.getMessage());
+            System.err.println("SQL State: " + e.getSQLState());
+            System.err.println("Vendor Error: " + e.getErrorCode());
+        }
+        return false;
+    }
     public FareRule getFareRuleById(int ruleId) {
         String sql = "SELECT * FROM fare_rules WHERE rule_id = ?";
 
@@ -107,8 +128,8 @@ public class FareRuleDao {
     private FareRule extractFareRuleFromResultSet(ResultSet rs) throws SQLException {
         FareRule fareRule = new FareRule();
         fareRule.setRuleId(rs.getInt("rule_id"));
-        fareRule.setTicketType(valueOf(rs.getString("ticket_type")));
-        fareRule.setTravelType(valueOf(rs.getString("travel_type")));
+        fareRule.setTicketType(rs.getString("ticket_type"));
+        fareRule.setTravelType(rs.getString("travel_type"));
         fareRule.setBaseMultiplier(rs.getDouble("base_multiplier"));
         fareRule.setLastUpdated(rs.getTimestamp("last_updated"));
         return fareRule;

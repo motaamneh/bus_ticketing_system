@@ -477,10 +477,10 @@
             <div class="form-group">
               <label for="modalTicketType">Ticket Type:</label>
               <select id="modalTicketType" name="ticketType" required>
-                <option value="One-Trip">One-Trip</option>
-                <option value="Daily Pass">Daily Pass</option>
-                <option value="Weekly Pass">Weekly Pass</option>
-                <option value="Monthly Pass">Monthly Pass</option>
+                <option value="ONE_TRIP">One-Trip</option>
+                <option value="DAILY_PASS">Daily Pass</option>
+                <option value="WEEKLY_PASS">Weekly Pass</option>
+                <option value="MONTHLY_PASS">Monthly Pass</option>
               </select>
             </div>
 
