@@ -13,20 +13,23 @@ import java.io.IOException;
 
 @WebServlet("/passenger/*")
 public class PassengerServlet extends HttpServlet {
+
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
 
-        String path = request.getRequestURI().substring(request.getContextPath().length());
+        HttpSession session = request.getSession(false);
 
-        if(path.equals("/passenger/") || path.equals("/passenger/dashboard")) {
-            // Verify admin role
-            HttpSession session = request.getSession(false);
-            if(session != null && "passenger".equals(session.getAttribute("role"))) {
-                request.getRequestDispatcher("/passengerdashboard.jsp").forward(request, response);
-            } else {
-                response.sendRedirect(request.getContextPath() + "/login");
-            }
+        // Check if user is logged in and is a passenger
+        if (session == null || !"passenger".equals(session.getAttribute("role"))) {
+            response.sendRedirect(request.getContextPath() + "/login");
+            return;
+        }
+
+        String path = request.getPathInfo(); // Gets the part after /passenger
+
+        if (path == null || path.equals("/") || path.equals("/dashboard")) {
+            request.getRequestDispatcher("/passengerdashboard.jsp").forward(request, response);
         } else {
             response.sendError(HttpServletResponse.SC_NOT_FOUND);
         }

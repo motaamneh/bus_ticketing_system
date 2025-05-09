@@ -249,28 +249,28 @@
       <div class="card-icon">🔍</div>
       <h3>Search Trips</h3>
       <p>Find available bus trips by entering your destination and travel date.</p>
-      <a href="<%= request.getContextPath() %>/search-trips" class="card-btn">Search Now</a>
+      <a href="<%= request.getContextPath() %>/passenger/search-trips" class="card-btn">Search Now</a>
     </div>
 
     <div class="card">
       <div class="card-icon">💰</div>
       <h3>Calculate Fare</h3>
       <p>Check fare prices for different routes and passenger categories.</p>
-      <a href="<%= request.getContextPath() %>/calculate-fare" class="card-btn">Calculate</a>
+      <a href="<%= request.getContextPath() %>/passenger/calculate-fare" class="card-btn">Calculate</a>
     </div>
 
     <div class="card">
       <div class="card-icon">🎫</div>
       <h3>Purchase Tickets</h3>
       <p>Buy tickets for your selected trips securely and instantly.</p>
-      <a href="<%= request.getContextPath() %>/buy-tickets" class="card-btn">Buy Tickets</a>
+      <a href="<%= request.getContextPath() %>/passenger/buy-tickets" class="card-btn">Buy Tickets</a>
     </div>
 
     <div class="card">
       <div class="card-icon">📋</div>
       <h3>My Bookings</h3>
       <p>View and manage your current and past ticket bookings.</p>
-      <a href="<%= request.getContextPath() %>/my-bookings" class="card-btn">View Bookings</a>
+      <a href="<%= request.getContextPath() %>/passenger/my-bookings" class="card-btn">View Bookings</a>
     </div>
   </div>
 

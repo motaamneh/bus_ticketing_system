@@ -16,4 +16,5 @@
         <param-name>evening.discount</param-name>
         <param-value>15.0</param-value> <!-- Example: 10% evening discount -->
     </context-param>
+
 </web-app>
