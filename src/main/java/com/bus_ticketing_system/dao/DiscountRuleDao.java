@@ -63,22 +63,67 @@ public class DiscountRuleDao {
 
         return discountRules;
     }
-
-    public boolean updateDiscountPercentage(String category, double discountPercentage) {
+    public boolean updateDiscount(String category, double percentage) {
         String sql = "UPDATE discount_rules SET discount_percentage = ? WHERE category = ?";
 
         try (Connection conn = DBConnection.getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
 
-            stmt.setDouble(1, discountPercentage);
+            stmt.setDouble(1, percentage);
             stmt.setString(2, category);
 
-            return stmt.executeUpdate() == 1;
+            int rowsAffected = stmt.executeUpdate();
+            return rowsAffected > 0;
+        } catch (SQLException e) {
+            System.err.println("Error updating discount for " + category);
+            e.printStackTrace();
+            return false;
+        }
+    }
+
+    public boolean updateDiscountPercentage(String category, double percentage) {
+        String sql = "UPDATE discount_rules SET discount_percentage = ?, last_updated = CURRENT_TIMESTAMP WHERE category = ?";
+
+        try (Connection conn = DBConnection.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+
+            stmt.setDouble(1, percentage);
+            stmt.setString(2, category.toUpperCase());
+
+            int affectedRows = stmt.executeUpdate();
+
+            if (affectedRows == 0) {
+                // No rows updated - category might not exist
+                System.err.println("No rows updated for category: " + category);
+                return false;
+            }
+            return true;
+        } catch (SQLException e) {
+            System.err.println("SQL Error updating discount for " + category);
+            System.err.println("Error Code: " + e.getErrorCode());
+            System.err.println("SQL State: " + e.getSQLState());
+            System.err.println("Message: " + e.getMessage());
+            e.printStackTrace();
+            return false;
+        }
+    }
+
+    public double getDiscountPercentage(String category) {
+        String sql = "SELECT discount_percentage FROM discount_rules WHERE category = ?";
+
+        try (Connection conn = DBConnection.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+
+            stmt.setString(1, category.toUpperCase());
+            ResultSet rs = stmt.executeQuery();
+
+            if (rs.next()) {
+                return rs.getDouble("discount_percentage");
+            }
         } catch (SQLException e) {
             e.printStackTrace();
         }
-
-        return false;
+        return 0.0; // Default if not found
     }
 
     private DiscountRule extractDiscountRuleFromResultSet(ResultSet rs) throws SQLException {

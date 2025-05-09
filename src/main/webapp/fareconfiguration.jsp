@@ -606,36 +606,34 @@
         <div class="fare-card-header">
           User Category Discounts
         </div>
-        <form action="<%= request.getContextPath() %>/admin/discounts/update" method="post">
+        <form action="<%= request.getContextPath() %>/admin/fares/discounts/update" method="post">
           <div class="discount-group">
             <div class="discount-title">Discount Percentages</div>
 
             <div class="discount-item">
-              <label for="regular">Regular:</label>
-              <input type="number" id="regular" name="regular" value="<%= discounts.get("regular") %>" min="0" max="100"> %
-            </div>
-
-            <div class="discount-item">
               <label for="student">Student:</label>
-              <input type="number" id="student" name="student" value="<%= discounts.get("student") %>" min="0" max="100"> %
+              <input type="number" id="student" name="student"
+                     value="<%= discounts.get("student") %>" min="0" max="100"> %
             </div>
 
             <div class="discount-item">
               <label for="senior">Senior:</label>
-              <input type="number" id="senior" name="senior" value="<%= discounts.get("senior") %>" min="0" max="100"> %
+              <input type="number" id="senior" name="senior"
+                     value="<%= discounts.get("senior") %>" min="0" max="100"> %
             </div>
 
             <div class="discount-item">
               <label for="evening">Evening:</label>
-              <input type="number" id="evening" name="evening" value="<%= discounts.get("evening") %>" min="0" max="100"> %
-              <span style="margin-left: 10px; font-size: 12px; color: #666;">(applies to One-Trip tickets after 7 PM)</span>
+              <input type="number" id="evening" name="evening"
+                     value="<%= discounts.get("evening") %>" min="0" max="100"> %
+              <span>(applies to One-Trip tickets after 7 PM)</span>
             </div>
           </div>
 
           <div class="form-group">
             <label for="maxDiscount">Maximum Combined Discount (%)</label>
-            <input type="number" id="maxDiscount" name="maxDiscount" value="50" min="0" max="100">
-            <small style="display: block; margin-top: 5px; color: #666;">Note: Total combined discount will not exceed this value</small>
+            <input type="number" id="maxDiscount" name="maxDiscount"
+                   value="50" min="0" max="100">
           </div>
 
           <button type="submit" class="action-btn">Update Discount Rules</button>
