@@ -49,6 +49,23 @@ public class TripDao {
 
         return trips;
     }
+    public List<Trip> getAvailableTrips() {
+        List<Trip> trips = new ArrayList<>();
+        String sql = "SELECT * FROM trips WHERE departure_time > NOW() AND available_seats > 0 ORDER BY departure_time ASC";
+
+        try (Connection conn = DBConnection.getConnection();
+             Statement stmt = conn.createStatement();
+             ResultSet rs = stmt.executeQuery(sql)) {
+
+            while (rs.next()) {
+                trips.add(extractTripFromResultSet(rs));
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return trips;
+    }
 
     public List<Trip> searchTrips(int originCityId, int destinationCityId, String travelType, Date travelDate) {
         List<Trip> trips = new ArrayList<>();
