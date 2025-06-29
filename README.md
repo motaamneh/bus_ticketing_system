@@ -1,3 +1,2 @@
-Don't forget to make a database (MySQL) before and make sure that the tables are correct, I'll attach the sql file soon.
- 
+This project contains the Admin side it's incomplete on github the rest of the project has been completed by another developer. 
   
